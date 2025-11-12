@@ -155,7 +155,10 @@ Target.create "Test" (fun _ ->
 )
 
 Target.create "Docs" (fun _ ->
-    exec "dotnet" "fornax build" docsDir
+    let processResult = DotNet.exec (DotNet.Options.withWorkingDirectory docsDir) "fornax build" ""
+
+    if processResult.ExitCode <> 0 then
+        failwithf "Failed to execute Fornax %A" processResult
 )
 
 // --------------------------------------------------------------------------------------
