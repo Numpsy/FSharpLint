@@ -104,11 +104,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        global-json-file: global.json
+    #- name: Setup .NET
+    #  uses: actions/setup-dotnet@v4
+    #  with:
+    #    global-json-file: global.json
 
+    - name: Remove global.json to allow latest SDK
+      run: rm -f global.json
     - name: Restore tools
       run: dotnet tool restore
     - name: Restore dependencies
