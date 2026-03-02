@@ -187,16 +187,25 @@ jobs:
           <?xml version="1.0" encoding="utf-8"?>
           <configuration>
             <packageSources>
+              <clear />
               <add key="local" value="./artifacts" />
+              <add key="nuget" value="https://api.nuget.org/v3/index.json" />
             </packageSources>
-            <disabledPackageSources>
-              <add key="nuget.org" value="true" />
-            </disabledPackageSources>
+            <packageSourceMapping>
+              <packageSource key="nuget">
+                <package pattern="*" />
+              </packageSource>
+              <packageSource key="local">
+                <package pattern="dotnet-fsharplint" />
+              </packageSource>
+            </packageSourceMapping>
           </configuration>
           EOF
       - name: Install FSharpLint from downloaded binaries
         run: dotnet tool install --global dotnet-fsharplint --prerelease
       - name: Add .NET tools to PATH
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+      - name: Restore console project
+        run: dotnet restore ./src/FSharpLint.Console/FSharpLint.Console.fsproj
       - name: Lint FSharpLint.Console project
         run: dotnet fsharplint lint ./src/FSharpLint.Console/FSharpLint.Console.fsproj
