@@ -322,16 +322,16 @@ module Ast =
         | SynExpr.Downcast(expression, synType, _) ->
             addMany [Type synType; Expression expression]
         // regular let or use
-        | SynExpr.LetOrUse letOrUse when letOrUse.IsBang = false ->
-            add <| Expression letOrUse.Body
-            List.revIter (Binding >> add) letOrUse.Bindings
+        | ExpressionUtilities.LetOrUse({Bindings = bindings; Body = body}, false, _) ->
+            add <| Expression body
+            List.revIter (Binding >> add) bindings
         // let! or use!
-        | SynExpr.LetOrUse  letOrUse when letOrUse.IsBang = true ->    //(_, _, _, true, bindings, leftHandSide, _, _) ->
-            match letOrUse.Bindings with
+        | ExpressionUtilities.LetOrUse({Bindings = bindings; Body = body}, true, _) ->
+            match bindings with
             | firstBinding :: andBangs ->
                 match firstBinding with
                 | SynBinding(headPat = pattern; expr = rightHandSide) ->
-                    addMany [Expression rightHandSide; Expression letOrUse.Body]
+                    addMany [Expression rightHandSide; Expression body]
                     List.iter (fun (SynBinding(headPat = pattern; expr = body)) ->
                         addMany [Expression body; Pattern pattern]
                     ) andBangs

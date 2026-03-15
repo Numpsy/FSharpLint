@@ -55,8 +55,8 @@ let rec checkExpression (expression: SynExpr) (range: range) (continuation: unit
                 }
         | SynExpr.App (_, _, funcExpr, _, innerRange) ->
             checkExpression funcExpr innerRange returnEmptyArray
-        | SynExpr.LetOrUse letOrUse when letOrUse.IsBang = false ->
-            checkExpression letOrUse.Body letOrUse.Range returnEmptyArray
+        | ExpressionUtilities.LetOrUse({Body = body; Range = innerRange}, false, _) ->
+            checkExpression body innerRange returnEmptyArray
         | _ -> Array.empty)
         (continuation ())
 and [<TailCall>] checkMultipleExpressions (expressions: list<SynExpr * range>) (continuation: unit -> array<WarningDetails>) =
